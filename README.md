@@ -10,6 +10,7 @@ A typical web project at Anomaly features:
 - Traefik as a reverse proxy
 - S3 compatible object stores to deliver the SPA
 - Additionally provision an Object store for the application to store user (e.g images, data) or application (PDF reports, data exports, etc) generated content
+- SSL certificates provisioned via Let's Encrypt
 
 Each server side component e.g API, worker, is containerised using Docker.
 
@@ -26,6 +27,14 @@ Additionally we provide:
 - Specifically allocating resources for the API, workers to make proper use of the resources
 - Provisioning QA and Production environments
 - Teardown examples
+
+## Secrets management
+
+We will also explore using Hashicorp's Vault product offering to manage:
+- API Keys
+- Database secrets
+- Security seeds for the application
+- Cycle secrets and distribute it to 
 
 # License
 Content of this repository are licensed under the Apache 2.0 license.

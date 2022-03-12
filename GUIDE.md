@@ -8,8 +8,8 @@ Whilst the defined stack should work for most applications at Anomaly, please re
 
 The guide assumes the availability of the following tools:
 
-- Terraform 1.1.x or higher
-- Linode CLI 5.16.x or higher, this is rarely used to query Stackscript and may be redundant as we moved to managed databases
+- [Terraform](https://github.com/hashicorp/terraform) 1.1.x or higher
+- [Linode CLI](https://github.com/linode/linode-cli) 5.16.x or higher, this is rarely used to query Stackscript and may be redundant as we moved to managed databases
 - [`sed`](https://www.gnu.org/software/sed/)
 - [`curl`](https://curl.se/)
 - [`jq`](https://stedolan.github.io/jq/)
@@ -32,6 +32,12 @@ You will require the following credentials:
 # Notes on Linode's official provider
 
 A provider
+
+
+Terraform also allows you to write modules, but there are selected usecase where you should be using Modules, this repository 
+
+![module](https://www.terraform.io/img/docs/image2.png)
+> Image courtesy of [Terraform](https://www.terraform.io/)
 
 # Setup
 
@@ -73,8 +79,11 @@ Both these will likely deprecated into the future and replaced with managed serv
 
 You will require to use the following features 
 
-![https://mktg-content-api-hashicorp.vercel.app/api/assets?product=tutorials&version=main&asset=public%2Fimg%2Fterraform%2Fautomation%2Ftfc-gh-actions-workflow.png][workflow]
+![workflow](https://mktg-content-api-hashicorp.vercel.app/api/assets?product=tutorials&version=main&asset=public%2Fimg%2Fterraform%2Fautomation%2Ftfc-gh-actions-workflow.png)
 
+> Image courtesy of [Terraform](https://www.terraform.io/)
+
+Managing between environments, from feature to staging through to prod
 
 # Resources
 
@@ -82,3 +91,4 @@ The above guide has been put together from the knowledge available at these web 
 
 - [Linode Terraform guide](https://www.linode.com/docs/guides/how-to-build-your-infrastructure-using-terraform-and-linode/)
 - [Hashicorp's guide to Github actions](https://learn.hashicorp.com/tutorials/terraform/github-actions)
+

@@ -34,7 +34,7 @@ We will also explore using Hashicorp's Vault product offering to manage:
 - API Keys
 - Database secrets
 - Security seeds for the application
-- Cycle secrets and distribute it to 
+- Cycle secrets and distribute it to the applications
 
 # License
 Content of this repository are licensed under the Apache 2.0 license.

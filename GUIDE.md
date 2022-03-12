@@ -27,11 +27,41 @@ You will require the following credentials:
 - Linode API Key with full access for Terraform Cloud to run the jobs, [see here](https://www.linode.com/docs/security/api-access/)
 - Terraform API Key for Github actions to trigger Terraform jobs, [see here](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/authenticating-with-the-github_token-secret)
 
+> This guide assumes you are using macOS 11+
+
 # Notes on Linode's official provider
 
-A provider is 
+A provider
 
 # Setup
+
+Install the command line utilities via Homebrew:
+
+```zsh
+brew install jq
+brew install terraform
+brew install linode-cli
+```
+
+# Querying Linode for Stackscripts
+
+At the moment you require the [Stackscript IDs](https://www.linode.com/docs/guides/platform/stackscripts/) for:
+
+- PostgreSQL One-Click
+- Docker One-Click
+
+Both these will likely deprecated into the future and replaced with managed services. For now it's handy to know how to query Linode for these:
+
+```zsh
+➜  ~ linode-cli stackscripts list --label="PostgreSQL One-Click"                                            
+┌────────┬──────────┬──────────────────────┬─────────────────┬───────────┬─────────────────────┬─────────────────────┐
+│ id     │ username │ label                │ images          │ is_public │ created             │ updated             │
+├────────┼──────────┼──────────────────────┼─────────────────┼───────────┼─────────────────────┼─────────────────────┤
+│ 611376 │ linode   │ PostgreSQL One-Click │ linode/debian11 │ True      │ 2019-11-13T06:05:28 │ 2022-02-22T15:08:31 │
+└────────┴──────────┴──────────────────────┴─────────────────┴───────────┴─────────────────────┴─────────────────────┘
+```
+
+> _Note_: you will be required to authenticate the cli once, before you can run this command using `linode-cli login`
 
 ## Terraform Cloud
 

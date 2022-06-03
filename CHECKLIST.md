@@ -10,3 +10,7 @@ This checklist is designed to help you work through the steps defined in our [gu
 - [ ] Adapt the template to your project
 - [ ] Initialise your infrastructure
 - [ ] Iterate your infrastructure
+
+# Resources
+
+- [Terraform Course - Automate your AWS cloud infrastructure](https://youtu.be/SLB_c_ayRMo)

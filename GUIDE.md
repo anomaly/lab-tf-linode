@@ -6,9 +6,11 @@ Whilst the defined stack should work for most applications at Anomaly, please re
 
 ## Concepts
 
+- Terraform
+- How to deploy our app 
+- Traefik 
 
-
-# Ingredients
+## Ingredients
 
 The guide assumes the availability of the following tools:
 
@@ -33,7 +35,7 @@ You will require the following credentials:
 
 > This guide assumes you are using macOS 11+
 
-# The Plan
+## The Plan
 
 This guide assumes that we are, automating infrastructure provisioning for a new project with the aim of being able to evolve or tear down environment as the requirements change. Our plan assumes that we will Terraform Cloud to run the jobs and then use Github Actions to trigger Terraform jobs.
 
@@ -42,35 +44,36 @@ This guide assumes that we are, automating infrastructure provisioning for a new
 
 
 
-## Notes on Linode's official provider
+### Notes on Linode's official provider
 
 A provider is a plugin that Terramform relies on to interact with the API of a cloud provider. Each provider adds a set of resource types and/or data sources that Terraform can manage. Linode provides an official verified provider via the [Terraform registry](https://registry.terraform.io/providers/linode/linode/latest).
 
-# Setup your Development Environment
+## Setup your Development Environment
 
 Before you are able to use this guide, you must setup certain tools and components once and others per project.
 
 Install the command line utilities via Homebrew:
 
-```zsh
+```sh
 brew install jq
 brew install terraform
+brew install helm
 brew install linode-cli
 ```
 
 You can install autocomplete for `Terraform CLI` using:
 
-```
+```sh
 terraform -install-autocomplete
 ````
 
 Login to Linode and Terraform via:
 
-```
+```sh
 linode-cli login # Follow the prompts
 terraform login # Follow the prompts
 ```
-# Desired Workflow
+## Desired Workflow
 
 Our aim is to get a `git` based workflow for our infrastructure deployment, a typical workflow would look like as following:
 
@@ -88,8 +91,12 @@ Our aim is to get a `git` based workflow for our infrastructure deployment, a ty
 
 There's an initial setup required for each workspace on  Terraform cloud.
 
-# Implementation
-## Querying Linode for Stackscripts
+## Implementation
+
+We are going to approach learning about the infrastructure setup in two steps, the first will be somewhat manual where you can see each cog working on it's own and then we will be able to automate the process.
+### Querying Linode for Stackscripts
+
+You can query Linode for stack scripts to automate teh deployment of various componet. This is largely a deprecated process as the preferred process is to deploy `pods` in a Kubernetes cluster.
 
 At the moment you require the [Stackscript IDs](https://www.linode.com/docs/guides/platform/stackscripts/) for:
 
@@ -127,7 +134,7 @@ Our aim here is to handle secrets as securely as possible.
 ## Github
 
 
-# Helm
+## Helm
 
 ```
  5278  helm search repo bitnami/redis

@@ -94,29 +94,6 @@ There's an initial setup required for each workspace on  Terraform cloud.
 ## Implementation
 
 We are going to approach learning about the infrastructure setup in two steps, the first will be somewhat manual where you can see each cog working on it's own and then we will be able to automate the process.
-### Querying Linode for Stackscripts
-
-You can query Linode for stack scripts to automate teh deployment of various componet. This is largely a deprecated process as the preferred process is to deploy `pods` in a Kubernetes cluster.
-
-At the moment you require the [Stackscript IDs](https://www.linode.com/docs/guides/platform/stackscripts/) for:
-
-- PostgreSQL One-Click
-- Docker One-Click
-
-Both these will likely deprecated into the future and replaced with managed services. For now it's handy to know how to query Linode for these:
-
-```zsh
-➜  ~ linode-cli stackscripts list --label="PostgreSQL One-Click"                                            
-┌────────┬──────────┬──────────────────────┬─────────────────┬───────────┬─────────────────────┬─────────────────────┐
-│ id     │ username │ label                │ images          │ is_public │ created             │ updated             │
-├────────┼──────────┼──────────────────────┼─────────────────┼───────────┼─────────────────────┼─────────────────────┤
-│ 611376 │ linode   │ PostgreSQL One-Click │ linode/debian11 │ True      │ 2019-11-13T06:05:28 │ 2022-02-22T15:08:31 │
-└────────┴──────────┴──────────────────────┴─────────────────┴───────────┴─────────────────────┴─────────────────────┘
-```
-
-Or `linode-cli stackscripts list --label="Docker One-Click"` for the Docker image.
-
-> _Note_: you will be required to authenticate the cli once, before you can run this command using `linode-cli login`
 
 ## Getting a Linode token
 

@@ -9,11 +9,11 @@ Our template provides a VCS (centred around branches and pull requests) based wo
 
 A typical web project at Anomaly features:
 
-- Python 3.9+ based APIs
+- Python 3.10+ based APIs
 - Workers managed using Celery
 - Postgres based backend
 - Redis for managing queues
-- Traefik as a reverse proxy
+- Traefik as a reverse proxy (via K8s that in turn uses Load balancers)
 - S3 compatible object stores to deliver the SPA
 - Additionally provision an Object store for the application to store user (e.g images, data) or application (PDF reports, data exports, etc) generated content
 - SSL certificates provisioned via Let's Encrypt
@@ -23,8 +23,8 @@ Each server side component e.g API, worker, is containerised using Docker.
 We assume the use of Terraform Cloud to preserve the state of the infrastructure.
 
 This template will provision the following:
-- A dual node (soon to be migrated to a hosted database + a Linode) based deployment for Docker based applications or a Kubernetes based cluster to run the Docker containers.
-- Managed Postgres database cluster (currently in beta)
+- A K8s cluster that will run the application and every other component not available as a managed service e.g Redis
+- Managed Postgres database cluster (currently in beta) or a Postgres HA cluster via K8s.
 - Object stores for the SPA and user generated content
 - DNS records for Linode to manage the application (includes MX records, pointers to other services like Netlify for the web site)
 

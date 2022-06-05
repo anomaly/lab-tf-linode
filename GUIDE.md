@@ -135,6 +135,13 @@ Linode's CLI can do everything that Linode has to offer. To create your Terrafor
 ### Provisioning a Kubernetes Cluster
 
 
+
+
+```
+export KUBE_VAR=`terraform output kubeconfig` && echo $KUBE_VAR | python -m base64 -d 
+```
+
+> The native macOS tools fails to decode base64 complaining about an illegal character which happens to be the quote marks.
 ### Provisioning our web application in the cluster
 
 

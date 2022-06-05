@@ -15,7 +15,7 @@ data "linode_object_storage_cluster" "primary" {
 # to be reverse proxied in the final setup
 resource "linode_object_storage_bucket" "bucket-web-client" {
     cluster = data.linode_object_storage_cluster.primary.id
-    label = "app.mylabs.com"
+    label = "${var.app_subdomain}.${var.app_tld}"
     acl = "public-read"
 }
 
@@ -45,7 +45,7 @@ output "key_secret_bucket_web_client" {
 # Applicaiton file store bucket
 resource "linode_object_storage_bucket" "bucket-file-store" {
     cluster = data.linode_object_storage_cluster.primary.id
-    label = "app-filestore"
+    label = "${var.app_subdomain}.${var.app_tld}-filestore"
 }
 
 # This key has read and write access and will be used by the 

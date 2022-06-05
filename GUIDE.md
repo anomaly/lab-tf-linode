@@ -108,6 +108,7 @@ Our aim here is to handle secrets as securely as possible.
 Linode's CLI can do everything that Linode has to offer. To create your Terraform configuraiton you will find the following commands handy:
 
 | Command | Description |
+--- | --- |
 | `linode-cli regions list` | Lists all the regions that Linode operates in, you will require the `id` of the relevant region |
 | `linode-cli linodes types` | Lists all the types of Linodes that are available, you will require the `id` of the relevant type |
 ## Terraform Cloud

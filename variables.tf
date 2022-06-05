@@ -9,6 +9,16 @@
 # The following are declarations for Linode's infrasructure suited
 # to what Anomaly require for their deployments.
 
+# Applicaiton level variables, that are used to name/label various
+# resources in the infrastructure.
+
+# Top level domain that the application is associated with, this
+# is not necessarily the sub domain the app is served from
+variable "app_tld" {
+  description = "Top level domain that the applicaiton is associated with (required)"
+  type = string
+}
+
 # Identifies a Linode API key with all access
 variable "linode_token" {
   description = "A Linode API key with apporpirate access"

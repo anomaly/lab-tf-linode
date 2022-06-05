@@ -19,6 +19,12 @@ variable "app_tld" {
   type = string
 }
 
+variable "app_subdomain" {
+  description = "Subdomain that the application is served from (required)"
+  type = string
+  default = "www"  
+}
+
 # Identifies a Linode API key with all access
 variable "linode_token" {
   description = "A Linode API key with apporpirate access"

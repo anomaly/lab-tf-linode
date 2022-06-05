@@ -8,12 +8,22 @@ resource "linode_lke_cluster" "k8s-cluster" {
     tags = var.k8s_tags
 
     dynamic "pool" {
-        for_each = var.k8s_pools
+        for_each = var.k8s_pool
         content {
             type  = pool.value["type"]
             count = pool.value["count"]
         }
     }
+}
+
+# Awaits the completion of creation of the K8s cluster
+# this is to assist the other resources not to get ahead
+# of the creation of the cluster
+resource "time_sleep" "wait_for_kubernetes" {
+    depends_on = [
+        linode_lke_cluster.k8s-cluster
+    ]
+    create_duration = "20s"
 }
 
 # We output the following variables from the Terraform state

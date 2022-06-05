@@ -57,7 +57,7 @@ variable "k8s_tags" {
   default = ["testing"]
 }
 
-variable "k8s_pools" {
+variable "k8s_pool" {
   description = "The Node Pool specifications for the Kubernetes cluster. (required)"
   type = list(object({
     type = string

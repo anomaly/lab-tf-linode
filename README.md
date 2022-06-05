@@ -18,30 +18,31 @@ A typical web project at Anomaly features:
 - Additionally provision an Object store for the application to store user (e.g images, data) or application (PDF reports, data exports, etc) generated content
 - SSL certificates provisioned via Let's Encrypt
 
-Each server side component e.g API, worker, is containerised using Docker.
+Each [server side component](https://github.com/anomaly/lab-python-server) e.g API, worker, is containerised using Docker.
 
 We assume the use of Terraform Cloud to preserve the state of the infrastructure.
 
 This template will provision the following:
-- A K8s cluster that will run the application and every other component not available as a managed service e.g Redis
-- Managed Postgres database cluster (currently in beta) or a Postgres HA cluster via K8s.
-- Object stores for the SPA and user generated content
-- DNS records for Linode to manage the application (includes MX records, pointers to other services like Netlify for the web site)
+- [X] A K8s cluster that will run the application and every other component not available as a managed service e.g Redis
+- [ ] Managed Postgres database cluster (currently in beta) or a Postgres HA cluster via K8s.
+- [X] Object stores for the SPA and user generated content
+- [ ] DNS records for Linode to manage the application (includes MX records, pointers to other services like Netlify for the web site)
+- [ ] Use Terraform cloud as the backend for state and variables
 
 Additionally we provide:
 
-- Examples of scaling the infrastructure up and down
-- Specifically allocating resources for the API, workers to make proper use of the resources
-- Provisioning QA and Production environments
-- Teardown examples
+- [ ] Examples of scaling the infrastructure up and down
+- [ ] Specifically allocating resources for the API, workers to make proper use of the resources
+- [ ] Provisioning QA and Production environments
+- [ ] Teardown examples
 
 ## Secrets management
 
 We will also explore using Hashicorp's Vault product offering to manage:
-- API Keys
-- Database secrets
-- Security seeds for the application
-- Cycle secrets and distribute it to the applications
+- [ ] API Keys
+- [ ] Database secrets
+- [ ] Security seeds for the application
+- [ ] Cycle secrets and distribute it to the applications
 
 # Resources
 

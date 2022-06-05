@@ -19,24 +19,24 @@ resource "linode_lke_cluster" "k8s-cluster" {
 # We output the following variables from the Terraform state
 # as the project progresses we might not need to see these
 # and automate provisioning as far as possible
-output "kubeconfig" {
+output "k8s_kubeconfig" {
    value = linode_lke_cluster.k8s-cluster.kubeconfig
    sensitive = true
 }
 
-output "api_endpoints" {
+output "k8s_api_endpoints" {
    value = linode_lke_cluster.k8s-cluster.api_endpoints
 }
 
-output "status" {
+output "k8s_status" {
    value = linode_lke_cluster.k8s-cluster.status
 }
 
-output "id" {
+output "k8s_id" {
    value = linode_lke_cluster.k8s-cluster.id
 }
 
-output "pool" {
+output "k8s_pool" {
    value = linode_lke_cluster.k8s-cluster.pool
 }
     

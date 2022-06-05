@@ -57,6 +57,6 @@ variable "k8s_pools" {
 
 # Object store related variables
 variable "object_store_cluster_id" {
-  description = "The ID of the object store cluster to use for storing the application state. (required)"
+  description = "The ID of the object store cluster (locaiton) to use. (required)"
   default = "ap-south-1"
 }

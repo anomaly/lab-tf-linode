@@ -5,6 +5,6 @@
 #
 # This is ultimately stored in Terraform cloud
 provider "linode" {
-  token = var.linode_token
+    token = var.linode_token
 }
 

@@ -26,22 +26,22 @@ variable "k8s_version" {
   default = "1.23"
 }
 
-variable "label" {
+variable "k8s_label" {
   description = "The unique label to assign to this cluster. (required)"
 }
 
-variable "region" {
+variable "k8s_region" {
   description = "The region where your cluster will be located. (required)"
   default = "ap-southeast"
 }
 
-variable "tags" {
+variable "k8s_tags" {
   description = "Tags to apply to your cluster for organizational purposes. (optional)"
   type = list(string)
   default = ["testing"]
 }
 
-variable "pools" {
+variable "k8s_pools" {
   description = "The Node Pool specifications for the Kubernetes cluster. (required)"
   type = list(object({
     type = string
@@ -53,4 +53,10 @@ variable "pools" {
           count = 3
     }
   ]
+}
+
+# Object store related variables
+variable "object_store_cluster_id" {
+  description = "The ID of the object store cluster to use for storing the application state. (required)"
+  default = "ap-south-1"
 }

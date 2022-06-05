@@ -1,0 +1,1 @@
+# These are DNS records required for the application to function

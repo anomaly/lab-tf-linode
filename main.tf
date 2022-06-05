@@ -15,6 +15,10 @@ terraform {
         }
         # Kubernetes providers to provisiont he application 
         # and other requires services
+        helm = {
+            source = "hashicorp/helm"
+            version = "2.4.1"
+        }
         kubernetes = {
             source = "hashicorp/kubernetes"
             version = "2.8.0"     

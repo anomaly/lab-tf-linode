@@ -132,6 +132,8 @@ Linode's CLI can do everything that Linode has to offer. To create your Terrafor
 | `linode-cli regions list` | Lists all the regions that Linode operates in, you will require the `id` of the relevant region |
 | `linode-cli linodes types` | Lists all the types of Linodes that are available, you will require the `id` of the relevant type |
 
+> Setting TF_LOG=TRACE in your environment will enable tracing of Terraform commands.
+
 ### Provisioning a Kubernetes Cluster
 
 

@@ -29,16 +29,5 @@ terraform {
         }
 
     }
-
-
-    # Use terraform cloud as our backend for state and secret
-    # management, this will enable collaboration and sharing
-    # the state of the application
-    cloud {
-        organization = "anomaly"
-        workspaces {
-            name = "lab-tf-linode"
-        }
-    }
-
+    
 }

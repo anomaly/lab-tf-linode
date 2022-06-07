@@ -16,16 +16,6 @@ resource "linode_lke_cluster" "k8s-cluster" {
     }
 }
 
-# Awaits the completion of creation of the K8s cluster
-# this is to assist the other resources not to get ahead
-# of the creation of the cluster
-resource "time_sleep" "wait_for_kubernetes" {
-    depends_on = [
-        linode_lke_cluster.k8s-cluster
-    ]
-    create_duration = "20s"
-}
-
 # We output the following variables from the Terraform state
 # as the project progresses we might not need to see these
 # and automate provisioning as far as possible

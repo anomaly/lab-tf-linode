@@ -16,7 +16,7 @@ provider "linode" {
 # is a base64 encoded yaml file, which will be decoded and parsed
 provider "helm" {
     kubernetes {
-        config_path = "~/.kube/config"
+        config_path = ".kube/config"
         # host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.server}"
         # client_certificate = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-certificate-data)}"
         # client_key = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-key-data)}"
@@ -25,7 +25,7 @@ provider "helm" {
 }
 
 provider "kubernetes" {
-    config_path = "~/.kube/config"
+    config_path = ".kube/config"
     # host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.server}"
     # client_certificate = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-certificate-data)}"
     # client_key = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-key-data)}"
@@ -33,7 +33,7 @@ provider "kubernetes" {
 }
 
 provider "kubectl" {
-    config_path = "~/.kube/config"
+    config_path = ".kube/config"
     # host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.server}"
     # client_certificate = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-certificate-data)}"
     # client_key = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-key-data)}"

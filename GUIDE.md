@@ -7,8 +7,15 @@ Whilst the defined stack should work for most applications at Anomaly, please re
 ## Concepts
 
 - Terraform
-- How to deploy our app 
-- Traefik 
+- Traefik via Nodebalancer
+- Helm to install charts
+
+## What do we get in the end?
+
+The examples are split to achieve two scenarios:
+- A setup completely deployed as Pods in a K8s cluster (this includes the database, message broker, application, load balancer, etc.)
+- A setup partially deployed as manage services like databases and the application, worker and load balancer running as Pods.
+
 
 ## Ingredients
 
@@ -68,8 +75,6 @@ This guide assumes that we are, automating infrastructure provisioning for a new
 - Provision secrets and setup Terraform Cloud
 - Provision secrets and setup Github Actions
 
-
-
 ### Notes on Linode's official provider
 
 A provider is a plugin that Terramform relies on to interact with the API of a cloud provider. Each provider adds a set of resource types and/or data sources that Terraform can manage. Linode provides an official verified provider via the [Terraform registry](https://registry.terraform.io/providers/linode/linode/latest).
@@ -104,6 +109,10 @@ The files are structures for logical reasons alone. Terraform will merge the con
 | k8s.tf | The Kubernetes configuration file, this is where you will define your Kubernetes infrastructure |
 | providers.tf | The provider configuration file, this is where you will define your providers e.g Linode + Kubernetes |
 | variables.tf | The variables configuration file, this is where you will define your Terraform input variables |
+| redis.tf | The redis configuration file, this is where you will define your redis infrastructure |
+| loadbalancer.tf | The loadbalancer configuration file, this is where you will define your loadbalancer infrastructure, our example uses traefik |
+| dns.tf | The dns configuration file, this is where you will define your dns infrastructure |
+| terraform.tfvars | The Terraform variables file, this is where you will define your Terraform variables, this is versioned for demonstration purposes |
 
 ### Understanding variables for Terraform
 
@@ -125,6 +134,12 @@ Our aim here is to handle secrets as securely as possible.
 ➜  ~ linode_token=`linode-cli profile token-create --json --label="Terraform Cloud" | jq '.[0]["token"]'`
 ```
 
+`variables.tf` defines the variable `linode_token`, if you are managing the state locally (for the purposes to learning or testing) then you can 
+
+```sh
+export TF_VAR_linode_token=`linode-cli profile token-create --json --label="Terraform Cloud" | jq '.[0]["token"]'`
+```
+
 Linode's CLI can do everything that Linode has to offer. To create your Terraform configuraiton you will find the following commands handy:
 
 | Command | Description |
@@ -136,7 +151,7 @@ Linode's CLI can do everything that Linode has to offer. To create your Terrafor
 
 ### Provisioning a Kubernetes Cluster
 
-
+The central aim of using a tool like `Terraform`
 
 
 ```
@@ -156,28 +171,9 @@ export KUBE_VAR=`terraform output kubeconfig` && echo $KUBE_VAR | python -m base
 
 
 
-
 ---
 
 ## Github
-
-
-## Helm
-
-```
- 5278  helm search repo bitnami/redis
- 5279  helm search repo bitnami/traefik
- 5280  helm repo add traefik https://helm.traefik.io/traefik
- 5281  helm repo update
- 5650  helm search repo bitnami/postgres
- 5652  helm search repo bitnami/postgres
- 5653  helm install postgres bitnami postgres-ha
- 5654  helm install postgres bitnami/postgres-ha
- 5655  helm install postgres bitnami/bitnami/postgresql-ha
- 5656  helm install postgres bitnami/postgresql-ha
- 5663  helm repo add traefik https://helm.traefik.io/traefik
- 5664  helm install traefik traefik/traefik
- ```
 
 # Resources
 

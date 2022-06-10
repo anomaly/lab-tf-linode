@@ -39,9 +39,9 @@ Additionally we provide:
 ## Secrets management
 
 We will also explore using Hashicorp's Vault product offering to manage:
-- [ ] API Keys
+- [X] API Keys
 - [ ] Database secrets
-- [ ] Security seeds for the application
+- [X] Security seeds for the application
 - [ ] Cycle secrets and distribute it to the applications
 
 # Resources

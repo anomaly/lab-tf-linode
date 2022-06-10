@@ -42,6 +42,25 @@ output "key_secret_bucket_web_client" {
     sensitive = true
 }
 
+# Uses the kubernetes_secret resource to write the keys to the cluster
+# this will allow the application to grab these from the environment
+# avoiding the need for a configuration file passing them on
+resource "kubernetes_secret" "bucket-credentials-web-client" {
+  depends_on = [
+    linode_lke_cluster.k8s-cluster,
+    linode_object_storage_key.key-bucket-web-client
+  ]
+
+  metadata {
+     name = "bucket-credentials-web-client"
+  }
+
+  data = {
+    access_key = "${linode_object_storage_key.key-bucket-web-client.access_key}"
+    secret_key = "${ linode_object_storage_key.key-bucket-web-client.secret_key}"
+  }
+}
+
 # Applicaiton file store bucket
 resource "linode_object_storage_bucket" "bucket-file-store" {
     cluster = data.linode_object_storage_cluster.primary.id
@@ -69,4 +88,23 @@ output "key_accesss_bucket_file_store" {
 output "key_secret_bucket_file_store" {
     value = linode_object_storage_key.key-bucket-file-store.secret_key
     sensitive = true
+}
+
+# Uses the kubernetes_secret resource to write the keys to the cluster
+# this will allow the application to grab these from the environment
+# avoiding the need for a configuration file passing them on
+resource "kubernetes_secret" "bucket-credentials-file-store" {
+  depends_on = [
+    linode_lke_cluster.k8s-cluster,
+    linode_object_storage_key.key-bucket-file-store
+  ]
+
+  metadata {
+     name = "bucket-credentials-file-store"
+  }
+
+  data = {
+    access_key = "${linode_object_storage_key.key-bucket-file-store.access_key}"
+    secret_key = "${ linode_object_storage_key.key-bucket-file-store.secret_key}"
+  }
 }

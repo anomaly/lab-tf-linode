@@ -164,6 +164,12 @@ The central aim of using a tool like `Terraform` is to describe the
 export KUBE_VAR=`terraform output kubeconfig` && echo $KUBE_VAR | python -m base64 -d 
 ```
 
+you can use to unpack the base64 payload
+
+```
+kubectl get secret bucket-credentials-web-client -o jsonpath='{.data}'
+```
+
 > The native macOS tools fails to decode base64 complaining about an illegal character which happens to be the quote marks.
 ### Provisioning our web application in the cluster
 

@@ -124,6 +124,12 @@ Input variables are defined in the `variables.tf` file. You must provide a value
 
 The finished version of our setup will use Terraform Cloud to managed these.
 
+### Providers
+
+Our setup uses the Linode, Kubernetes, Kubectl and Helm providers. The Linode provider will create the cluster and all following steps depend on the Cluster being available.
+
+The other three providers require the `host`, `cluster_ca_certificate`, and `token` parameters to communicate with the K8s cluster. Take a look at `provider.tf` to see how we dynamically parse them out of the state.
+
 ### Getting a Linode token
 
 With Linode's CLI setup you can get a token for Terraform Cloud using the following command. This will assign the newly generated tokent o a bash variable `linode-token`.
@@ -151,7 +157,7 @@ Linode's CLI can do everything that Linode has to offer. To create your Terrafor
 
 ### Provisioning a Kubernetes Cluster
 
-The central aim of using a tool like `Terraform`
+The central aim of using a tool like `Terraform` is to describe the 
 
 
 ```

@@ -20,7 +20,7 @@ resource "linode_lke_cluster" "k8s-cluster" {
 # as the project progresses we might not need to see these
 # and automate provisioning as far as possible
 output "k8s_kubeconfig" {
-   value = linode_lke_cluster.k8s-cluster.kubeconfig
+   value = base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)
    sensitive = true
 }
 

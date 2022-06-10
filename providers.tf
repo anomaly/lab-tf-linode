@@ -14,29 +14,27 @@ provider "linode" {
 # The kubectl configuration which is available via the output
 # terraform output kubeconfig 
 # is a base64 encoded yaml file, which will be decoded and parsed
+#
+# Linode uses the host, cluster_ca_certificate, and token to talk
+# back to the cluster
+# TODO: can we make the parsing a bit better?
 provider "helm" {
     kubernetes {
-        config_path = ".kube/config"
-        # host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.server}"
-        # client_certificate = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-certificate-data)}"
-        # client_key = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-key-data)}"
-        # cluster_ca_certificate ="${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.certificate-authority-data)}"
+        host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.server}"
+        cluster_ca_certificate ="${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.certificate-authority-data)}"
+        token = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users[0].user.token}"
     }
 }
 
 provider "kubernetes" {
-    config_path = ".kube/config"
-    # host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.server}"
-    # client_certificate = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-certificate-data)}"
-    # client_key = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-key-data)}"
-    # cluster_ca_certificate ="${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.certificate-authority-data)}"
+    host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.server}"
+    cluster_ca_certificate ="${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.certificate-authority-data)}"
+    token = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users[0].user.token}"
 }
 
 provider "kubectl" {
-    config_path = ".kube/config"
-    # host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.server}"
-    # client_certificate = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-certificate-data)}"
-    # client_key = "${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users.0.user.client-key-data)}"
-    # cluster_ca_certificate ="${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters.0.cluster.certificate-authority-data)}"
     load_config_file = false
+    host = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.server}"
+    cluster_ca_certificate ="${base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.certificate-authority-data)}"
+    token = "${yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users[0].user.token}"
 }

@@ -1,4 +1,5 @@
 # Environment vars
+.DS_Store
 .env
 .kube
 

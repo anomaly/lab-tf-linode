@@ -1,3 +1,28 @@
+# The Linode provider requires an API token that you can
+# generate using the linode-cli (check README)
+# https://registry.terraform.io/providers/linode/linode/latest/docs
+#
+# This is ultimately stored in Terraform cloud
+
+provider "linode" {
+    token = var.linode_token
+}
+
+# Each modules has a terraform block and defines what providers
+# it requires to use so you can expect to see the helm providers
+# in the other configuraiton files
+terraform {
+    # We use the Linode provider to speak with their v4 API
+    # subsequently we will use the Kubernetes provider to
+    # provision applications into the cluster
+    required_providers {
+        linode = {
+            source  = "linode/linode"
+            version = "~> 1.20"
+        }
+    }
+}
+
 # This configuration provisions object store buckets in Linode's
 # infrastructure for the application to either store files 
 # and a separate bucket to serve the web client from.
@@ -33,21 +58,21 @@ resource "linode_object_storage_key" "key_bucket_web_client" {
 # Uses the kubernetes_secret resource to write the keys to the cluster
 # this will allow the application to grab these from the environment
 # avoiding the need for a configuration file passing them on
-resource "kubernetes_secret" "bucket_credentials_web_client" {
-  depends_on = [
-    linode_lke_cluster.cluster_k8s,
-    linode_object_storage_key.key_bucket_web_client
-  ]
+# resource "kubernetes_secret" "bucket_credentials_web_client" {
+#   depends_on = [
+#     linode_lke_cluster.cluster_k8s,
+#     linode_object_storage_key.key_bucket_web_client
+#   ]
 
-  metadata {
-     name = "bucket_credentials_web_client"
-  }
+#   metadata {
+#      name = "bucket_credentials_web_client"
+#   }
 
-  data = {
-    access_key = "${linode_object_storage_key.key_bucket_web_client.access_key}"
-    secret_key = "${ linode_object_storage_key.key_bucket_web_client.secret_key}"
-  }
-}
+#   data = {
+#     access_key = "${linode_object_storage_key.key_bucket_web_client.access_key}"
+#     secret_key = "${ linode_object_storage_key.key_bucket_web_client.secret_key}"
+#   }
+# }
 
 # Applicaiton file store bucket
 resource "linode_object_storage_bucket" "bucket_file_store" {
@@ -69,18 +94,18 @@ resource "linode_object_storage_key" "key_bucket_file_store" {
 # Uses the kubernetes_secret resource to write the keys to the cluster
 # this will allow the application to grab these from the environment
 # avoiding the need for a configuration file passing them on
-resource "kubernetes_secret" "bucket_credentials_file_store" {
-  depends_on = [
-    linode_lke_cluster.cluster_k8s,
-    linode_object_storage_key.key_bucket_file_store
-  ]
+# resource "kubernetes_secret" "bucket_credentials_file_store" {
+#   depends_on = [
+#     linode_lke_cluster.cluster_k8s,
+#     linode_object_storage_key.key_bucket_file_store
+#   ]
 
-  metadata {
-     name = "bucket_credentials_file_store"
-  }
+#   metadata {
+#      name = "bucket_credentials_file_store"
+#   }
 
-  data = {
-    access_key = "${linode_object_storage_key.key_bucket_file_store.access_key}"
-    secret_key = "${ linode_object_storage_key.key_bucket_file_store.secret_key}"
-  }
-}
+#   data = {
+#     access_key = "${linode_object_storage_key.key_bucket_file_store.access_key}"
+#     secret_key = "${ linode_object_storage_key.key_bucket_file_store.secret_key}"
+#   }
+# }

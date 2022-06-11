@@ -1,3 +1,9 @@
+# Identifies a Linode API key with all access
+variable "linode_token" {
+  description = "A Linode API key with apporpirate access"
+  type        = string
+}
+
 # The following variables related to the Kubernetes cluster
 # that will be provisioned for your application, vary these
 # values via your terraform.tfvars file.

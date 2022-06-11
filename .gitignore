@@ -1,6 +1,7 @@
 # Environment vars
 .env
 .kube
+.DS_Store
 
 # Local .terraform directories
 **/.terraform/*

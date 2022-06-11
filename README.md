@@ -5,6 +5,11 @@ This repository is a reference template for Anomaly projects provisioning and ma
 As Linode move services like Databases to a managed product. We will evolve this template to use those services. As a small team Anomaly wishes to leverage off the strengths of providers Linode and have them do as much of the heavy lifting as possible.
 
 Our template provides a VCS (centred around branches and pull requests) based workflow.
+
+Files are structured accordingly to the [recommendations provided](https://www.terraform.io/language/modules/develop/structure) by Hashicorp. The modular approach allows us to provide template for environments or combination (e.g completely self managed, through to using managed services like databases).
+
+> We recommend using [tflint](https://github.com/terraform-linters/tflint) to lint the configuration files and ensure you are following the best practices.
+
 ## Typical Requirements
 
 A typical web project at Anomaly features:
@@ -40,7 +45,7 @@ Additionally we provide:
 
 We will also explore using Hashicorp's Vault product offering to manage:
 - [X] API Keys
-- [ ] Database secrets
+- [X] Database secrets
 - [X] Security seeds for the application
 - [ ] Cycle secrets and distribute it to the applications
 

@@ -1,4 +1,3 @@
-
 # main.cf - where the majority of the definitions live
 #
 # It's important to note that terraform will combine all the
@@ -54,29 +53,29 @@ provider "linode" {
 # TODO: can we make the parsing a bit better?
 provider "helm" {
     kubernetes {
-        host = yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.server
-        cluster_ca_certificate = base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.certificate-authority-data)
-        token = yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users[0].user.token
+        host = yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).clusters[0].cluster.server
+        cluster_ca_certificate = base64decode(yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).clusters[0].cluster.certificate-authority-data)
+        token = yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).users[0].user.token
     }
 }
 
 provider "kubernetes" {
-    host = yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.server
-    cluster_ca_certificate = base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.certificate-authority-data)
-    token = yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users[0].user.token
+    host = yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).clusters[0].cluster.server
+    cluster_ca_certificate = base64decode(yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).clusters[0].cluster.certificate-authority-data)
+    token = yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).users[0].user.token
 }
 
 provider "kubectl" {
     load_config_file = false
-    host = yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.server
-    cluster_ca_certificate = base64decode(yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).clusters[0].cluster.certificate-authority-data)
-    token = yamldecode(base64decode(linode_lke_cluster.k8s-cluster.kubeconfig)).users[0].user.token
+    host = yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).clusters[0].cluster.server
+    cluster_ca_certificate = base64decode(yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).clusters[0].cluster.certificate-authority-data)
+    token = yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).users[0].user.token
 }
 
 # This file defines a Kubernetes cluster that will be provisioned
 # on linode's infrasrtructure, note that you will have to provide
 # the values for your cluster
-resource "linode_lke_cluster" "k8s-cluster" {
+resource "linode_lke_cluster" "primary" {
     label = var.k8s_label
     k8s_version = var.k8s_version
     region = var.k8s_region
@@ -106,7 +105,7 @@ data "linode_object_storage_cluster" "primary" {
 # Web client bucket
 # Note that the ACL allows public read for the contents of the bucket
 # to be reverse proxied in the final setup
-resource "linode_object_storage_bucket" "bucket-web-client" {
+resource "linode_object_storage_bucket" "web_client" {
     cluster = data.linode_object_storage_cluster.primary.id
     label = "${var.app_subdomain}.${var.app_tld}"
     acl = "public-read"
@@ -114,10 +113,10 @@ resource "linode_object_storage_bucket" "bucket-web-client" {
 
 # The key provisioned will be able to read and write, this is used
 # by the s3cmd tool to copy files to it
-resource "linode_object_storage_key" "key-bucket-web-client" {
+resource "linode_object_storage_key" "web_client" {
   label = "key_bucket_web_client"
   bucket_access {
-    bucket_name = linode_object_storage_bucket.bucket-web-client.label
+    bucket_name = linode_object_storage_bucket.web_client.label
     cluster     = data.linode_object_storage_cluster.primary.id
     permissions = "read_write"
   }
@@ -126,34 +125,34 @@ resource "linode_object_storage_key" "key-bucket-web-client" {
 # Uses the kubernetes_secret resource to write the keys to the cluster
 # this will allow the application to grab these from the environment
 # avoiding the need for a configuration file passing them on
-resource "kubernetes_secret" "bucket-credentials-web-client" {
+resource "kubernetes_secret" "web_client" {
   depends_on = [
-    linode_lke_cluster.k8s-cluster,
-    linode_object_storage_key.key-bucket-web-client
+    linode_lke_cluster.primary,
+    linode_object_storage_key.web_client
   ]
 
   metadata {
-     name = "bucket-credentials-web-client"
+     name = "web-client"
   }
 
   data = {
-    access_key = linode_object_storage_key.key-bucket-web-client.access_key
-    secret_key = linode_object_storage_key.key-bucket-web-client.secret_key
+    access_key = linode_object_storage_key.web_client.access_key
+    secret_key = linode_object_storage_key.web_client.secret_key
   }
 }
 
 # Applicaiton file store bucket
-resource "linode_object_storage_bucket" "bucket-file-store" {
+resource "linode_object_storage_bucket" "file_store" {
     cluster = data.linode_object_storage_cluster.primary.id
     label = "${var.app_subdomain}.${var.app_tld}-filestore"
 }
 
 # This key has read and write access and will be used by the 
 # application to sign upload and download
-resource "linode_object_storage_key" "key-bucket-file-store" {
+resource "linode_object_storage_key" "file_store" {
   label = "key_bucket_file_store"
   bucket_access {
-    bucket_name = linode_object_storage_bucket.bucket-file-store.label
+    bucket_name = linode_object_storage_bucket.file_store.label
     cluster     = data.linode_object_storage_cluster.primary.id
     permissions = "read_write"
   }
@@ -162,19 +161,19 @@ resource "linode_object_storage_key" "key-bucket-file-store" {
 # Uses the kubernetes_secret resource to write the keys to the cluster
 # this will allow the application to grab these from the environment
 # avoiding the need for a configuration file passing them on
-resource "kubernetes_secret" "bucket-credentials-file-store" {
+resource "kubernetes_secret" "file_store" {
   depends_on = [
-    linode_lke_cluster.k8s-cluster,
-    linode_object_storage_key.key-bucket-file-store
+    linode_lke_cluster.primary,
+    linode_object_storage_key.file_store
   ]
 
   metadata {
-     name = "bucket-credentials-file-store"
+     name = "file-store"
   }
 
   data = {
-    access_key = "${linode_object_storage_key.key-bucket-file-store.access_key}"
-    secret_key = "${ linode_object_storage_key.key-bucket-file-store.secret_key}"
+    access_key = "${linode_object_storage_key.file_store.access_key}"
+    secret_key = "${ linode_object_storage_key.file_store.secret_key}"
   }
 }
 
@@ -184,7 +183,7 @@ resource "kubernetes_secret" "bucket-credentials-file-store" {
 resource "helm_release" "postgresql" {
 
     depends_on = [
-        linode_lke_cluster.k8s-cluster
+        linode_lke_cluster.primary
     ]
 
     name = "postgresql"
@@ -201,7 +200,7 @@ resource "helm_release" "postgresql" {
 
 resource "helm_release" "redis" {
     depends_on = [
-        linode_lke_cluster.k8s-cluster
+        linode_lke_cluster.primary
     ]
 
     name = "redis"
@@ -221,8 +220,8 @@ resource "helm_release" "redis" {
 
 resource "helm_release" "traefik" {
     depends_on = [
-         linode_lke_cluster.k8s-cluster
-   ]
+        linode_lke_cluster.primary
+    ]
 
     name = "traefik"
     repository = "https://helm.traefik.io/traefik"
@@ -249,5 +248,4 @@ resource "helm_release" "traefik" {
         name  = "ports.websecure.tls.enabled"
         value = "true"
     }
-
 }

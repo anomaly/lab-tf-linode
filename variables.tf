@@ -76,3 +76,19 @@ variable "object_store_cluster_id" {
   description = "The ID of the object store cluster (locaiton) to use. (required)"
   default = "ap-south-1"
 }
+
+# Region for Postgres backend
+variable "db_region" {
+  description = "The region where your cluster will be located. (required)"
+  default = "ap-southeast"
+}
+
+variable "db_cluster_size" {
+  description = "The number of replicas to be provisioned for the Postgres cluster. (required)"
+  default=3
+}
+
+variable "db_node_type" {
+  description = "The node type to use for the Postgres cluster. (required)"
+  default = "g6-nanode-1"
+}

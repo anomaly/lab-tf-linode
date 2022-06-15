@@ -47,3 +47,23 @@ output "key_secret_bucket_file_store" {
     value = linode_object_storage_key.file_store.secret_key
     sensitive = true
 }
+
+
+# Postgres managed database
+output "db_host_primary" {
+    value = linode_database_postgresql.primary.host_primary
+}
+
+output "db_host_secondary" {
+   value = linode_database_postgresql.primary.host_secondary
+}
+
+output "db_username" {
+    value = linode_database_postgresql.primary.root_username
+    sensitive = true
+}
+
+output "db_password" {
+    value = linode_database_postgresql.primary.root_password
+    sensitive = true
+}

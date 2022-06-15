@@ -11,21 +11,21 @@ terraform {
     required_providers {
         linode = {
             source  = "linode/linode"
-            version = "~> 1.20"
+            version = "1.28"
         }
         # Kubernetes providers to provisiont he application 
         # and other requires services
         helm = {
             source = "hashicorp/helm"
-            version = "2.4.1"
+            version = "2.5.1"
         }
         kubernetes = {
             source = "hashicorp/kubernetes"
-            version = "2.8.0"     
+            version = "2.11.0"     
         }
         kubectl = {
             source = "gavinbunney/kubectl"
-            version = "1.13.1"
+            version = "1.14.0"
         }
 
     }
@@ -50,7 +50,6 @@ provider "linode" {
 #
 # Linode uses the host, cluster_ca_certificate, and token to talk
 # back to the cluster
-# TODO: can we make the parsing a bit better?
 provider "helm" {
     kubernetes {
         host = yamldecode(base64decode(linode_lke_cluster.primary.kubeconfig)).clusters[0].cluster.server
@@ -177,7 +176,51 @@ resource "kubernetes_secret" "file_store" {
   }
 }
 
+# Provisions a managed PostgresSQL cluster on Linode's infrasrtructure
+# The cluster can be varied from a single node through to as many as
+# we desire.
+resource "linode_database_postgresql" "primary" {
 
+    label = "primary_db"
+
+    engine_id = "postgresql/13.2"
+    region = var.db_region
+    type = var.db_node_type
+    cluster_size = var.db_cluster_size
+
+    encrypted = true
+    replication_type = "semi_synch"
+    replication_commit_type = "remote_write"
+    ssl_connection = true
+
+    updates {
+        day_of_week = "saturday"
+        duration = 1
+        frequency = "monthly"
+        hour_of_day = 22
+        week_of_month = 2
+    }
+}
+
+# Write the relevant secrets to the Kubernetes cluster so the application
+# can read this from the environment variables
+resource "kubernetes_secret" "db_primary" {
+  depends_on = [
+    linode_database_postgresql.primary
+  ]
+
+  metadata {
+     name = "primary-db"
+  }
+
+  data = {
+    root_password = linode_database_postgresql.primary.root_password
+    root_username = linode_database_postgresql.primary.root_username
+    host_primary = linode_database_postgresql.primary.host_primary
+    host_secondary = linode_database_postgresql.primary.host_secondary
+    ca_cert = linode_database_postgresql.primary.ca_cert
+  }
+}
 
 # Install a high availability postgres database cluster via helm
 resource "helm_release" "postgresql" {
@@ -218,6 +261,8 @@ resource "helm_release" "redis" {
     }
 }
 
+# This will provision a nodebalancer and traefik  to serve the
+# application
 resource "helm_release" "traefik" {
     depends_on = [
         linode_lke_cluster.primary
@@ -249,3 +294,4 @@ resource "helm_release" "traefik" {
         value = "true"
     }
 }
+

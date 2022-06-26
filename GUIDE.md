@@ -157,7 +157,9 @@ Linode's CLI can do everything that Linode has to offer. To create your Terrafor
 
 ### Provisioning a Kubernetes Cluster
 
-The central aim of using a tool like `Terraform` is to describe the 
+The central aim of using a tool like `Terraform` is to describe the infrastructure as code and then have it maintain state. This guide will demonstrate how you can provision use the template to provision and teardown the infrastructure. The initial example keeps the state  on your local computer (this is easier to understand when you are getting started, but not ideal or recommended for production).
+
+The later part of the tutorial demostrates how you can use Terraform Cloud to provision and teardown the infrastructure.
 
 
 ```
@@ -173,10 +175,22 @@ kubectl get secret bucket-credentials-web-client -o jsonpath='{.data}'
 > The native macOS tools fails to decode base64 complaining about an illegal character which happens to be the quote marks.
 ### Provisioning our web application in the cluster
 
+https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#create-a-secret-in-the-cluster-that-holds-your-authorization-token
+
+https://stackoverflow.com/questions/49032812/how-to-pull-image-from-dockerhub-in-kubernetes
+
+```
+kubectl create secret docker-registry regcred 
+    --docker-username=<your-name> 
+    --docker-password=<your-pword> 
+    --docker-email=<your-email> -n <your-namespace>
+```
 
 ### Upgrade / Changing elements
 
 ### Teardown
+
+Once the 
 
 
 ## Moving services to managed products
@@ -185,17 +199,16 @@ kubectl get secret bucket-credentials-web-client -o jsonpath='{.data}'
 
 ---
 
-## Github
+## Deprecated 
 
-# Resources
+The following portion of the document is no longer relevant, the content will be refactored.
+
 
 The above guide has been put together from the knowledge available at these web resources. While most practices comes from Hashicorp's guide, there are pearls of wisdom from the team at Linode that have been thrown into the mix.
 
 - [Linode Terraform guide](https://www.linode.com/docs/guides/how-to-build-your-infrastructure-using-terraform-and-linode/)
 - [Hashicorp's guide to Github actions](https://learn.hashicorp.com/tutorials/terraform/github-actions)
 
-
-## Terrform modules
 
 Terraform also allows you to write modules, but there are selected usecase where you should be using Modules, this repository 
 

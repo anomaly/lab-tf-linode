@@ -181,6 +181,10 @@ resource "kubernetes_secret" "file_store" {
 # we desire.
 resource "linode_database_postgresql" "primary" {
 
+  depends_on = [
+    linode_lke_cluster.primary,
+  ]
+
     label = "primary_db"
 
     engine_id = "postgresql/13.2"
@@ -223,6 +227,7 @@ resource "kubernetes_secret" "db_primary" {
 }
 
 # Install a high availability postgres database cluster via helm
+# Note: helm releases write their secrets to the kubernetes cluster
 resource "helm_release" "postgresql" {
 
     depends_on = [
@@ -243,7 +248,8 @@ resource "helm_release" "postgresql" {
 
 resource "helm_release" "redis" {
     depends_on = [
-        linode_lke_cluster.primary
+        linode_lke_cluster.primary,
+        helm_release.postgresql
     ]
 
     name = "redis"
@@ -265,7 +271,9 @@ resource "helm_release" "redis" {
 # application
 resource "helm_release" "traefik" {
     depends_on = [
-        linode_lke_cluster.primary
+        linode_lke_cluster.primary,
+        helm_release.redis,
+        helm_release.postgresql 
     ]
 
     name = "traefik"
@@ -282,7 +290,7 @@ resource "helm_release" "traefik" {
         value = "true"
     }
     
-    # Default Redirect
+    # Default Redirect HTTP to HTTPS
     set {
         name  = "ports.web.redirectTo"
         value = "websecure"

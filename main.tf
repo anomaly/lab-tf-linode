@@ -13,12 +13,18 @@ terraform {
             source  = "linode/linode"
             version = "1.28"
         }
+
+        random = {
+            source  = "hashicorp/random"
+            version = "3.3.2"
+        }
+
         # Kubernetes providers to provisiont he application 
         # and other requires services
         helm = {
             source = "hashicorp/helm"
             version = "2.5.1"
-        }
+        }       
         kubernetes = {
             source = "hashicorp/kubernetes"
             version = "2.11.0"     
@@ -181,6 +187,38 @@ resource "kubernetes_secret" "file_store" {
     fqdn = "${linode_object_storage_bucket.file_store.label}.${linode_object_storage_bucket.file_store.cluster}.linodeobjects.com"
     access_key = linode_object_storage_key.file_store.access_key
     secret_key = linode_object_storage_key.file_store.secret_key
+  }
+}
+
+# Various application level secrets read from the environment
+# either available from the development vars or Terraform cloud
+#
+#  - SMTP user name
+#  - SMTP password
+#  - SMS username
+#  - SMS password
+
+
+# Secrets genearted and can be cycled over time as required:
+#
+#  - JWT secret
+resource "random_string" "jwt_secret" {
+  length = 32
+  special = true
+} 
+
+# Write app level secrets to the K8s cluster
+resource "kubernetes_secret" "app_secrets" {
+  depends_on = [
+    random_string.jwt_secret
+  ]
+
+  metadata {
+     name = "app-secrets"
+  }
+
+  data = {
+    jwt_secret = base64encode(random_string.jwt_secret.result)
   }
 }
 

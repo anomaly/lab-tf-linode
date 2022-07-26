@@ -74,6 +74,12 @@ output "dns_bucket_file_store" {
     value = "${linode_object_storage_bucket.file_store.label}.${linode_object_storage_bucket.file_store.cluster}.linodeobjects.com"
 }
 
+# JWT secret for the application
+output "jwt_secret" {
+    value = base64encode(random_string.jwt_secret.result)
+    sensitive = true
+}
+
 # Postgres managed database
 # output "db_host_primary" {
 #     value = linode_database_postgresql.primary.host_primary

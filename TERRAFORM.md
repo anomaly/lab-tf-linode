@@ -68,3 +68,14 @@ Resources can depend on each other, so Terraform can ensure that a particular re
 
 ## Namespaces for resources
 
+
+## Reference commands
+
+```
+s3cmd\
+  --access_key=$ACCESS_KEY\
+  --secret_key=$SECRET_KEY\
+  --host=ap-south-1.linodeobjects.com\
+  --host-bucket=www.anomaly.cloud.ap-south-1.linodeobjects.com\
+  sync --acl-public . s3://www.anomaly.cloud/
+```

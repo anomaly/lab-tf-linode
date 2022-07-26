@@ -38,6 +38,18 @@ output "key_secret_bucket_web_client" {
     sensitive = true
 }
 
+output "label_bucket_web_client" {
+    value = linode_object_storage_bucket.web_client.label
+}
+
+output "cluster_bucket_web_client" {
+    value = linode_object_storage_bucket.web_client.cluster
+}
+
+output "dns_bucket_web_client" {
+    value = "${linode_object_storage_bucket.web_client.label}.${linode_object_storage_bucket.web_client.cluster}.linodeobjects.com"
+}
+
 # Outputs the access and secret key for both buckets
 # these are required by the application to store and retrieve files
 output "key_access_bucket_file_store" {
@@ -50,21 +62,33 @@ output "key_secret_bucket_file_store" {
     sensitive = true
 }
 
+output "label_bucket_file_store" {
+    value = linode_object_storage_bucket.file_store.label
+}
+
+output "cluster_bucket_file_store" {
+    value = linode_object_storage_bucket.file_store.cluster
+}
+
+output "dns_bucket_file_store" {
+    value = "${linode_object_storage_bucket.file_store.label}.${linode_object_storage_bucket.file_store.cluster}.linodeobjects.com"
+}
+
 # Postgres managed database
-output "db_host_primary" {
-    value = linode_database_postgresql.primary.host_primary
-}
+# output "db_host_primary" {
+#     value = linode_database_postgresql.primary.host_primary
+# }
 
-output "db_host_secondary" {
-   value = linode_database_postgresql.primary.host_secondary
-}
+# output "db_host_secondary" {
+#    value = linode_database_postgresql.primary.host_secondary
+# }
 
-output "db_username" {
-    value = linode_database_postgresql.primary.root_username
-    sensitive = true
-}
+# output "db_username" {
+#     value = linode_database_postgresql.primary.root_username
+#     sensitive = true
+# }
 
-output "db_password" {
-    value = linode_database_postgresql.primary.root_password
-    sensitive = true
-}
+# output "db_password" {
+#     value = linode_database_postgresql.primary.root_password
+#     sensitive = true
+# }

@@ -127,6 +127,7 @@ resource "linode_object_storage_key" "web_client" {
 resource "kubernetes_secret" "web_client" {
   depends_on = [
     linode_lke_cluster.primary,
+    linode_object_storage_bucket.web_client,
     linode_object_storage_key.web_client
   ]
 
@@ -135,6 +136,9 @@ resource "kubernetes_secret" "web_client" {
   }
 
   data = {
+    bucket_name = linode_object_storage_bucket.web_client.label
+    cluster = linode_object_storage_bucket.web_client.cluster
+    fqdn = "${linode_object_storage_bucket.web_client.label}.${linode_object_storage_bucket.web_client.cluster}.linodeobjects.com"
     access_key = linode_object_storage_key.web_client.access_key
     secret_key = linode_object_storage_key.web_client.secret_key
   }
@@ -163,6 +167,7 @@ resource "linode_object_storage_key" "file_store" {
 resource "kubernetes_secret" "file_store" {
   depends_on = [
     linode_lke_cluster.primary,
+    linode_object_storage_bucket.file_store,
     linode_object_storage_key.file_store
   ]
 
@@ -171,109 +176,112 @@ resource "kubernetes_secret" "file_store" {
   }
 
   data = {
-    access_key = "${linode_object_storage_key.file_store.access_key}"
-    secret_key = "${ linode_object_storage_key.file_store.secret_key}"
+    bucket_name = linode_object_storage_bucket.file_store.label
+    cluster = linode_object_storage_bucket.file_store.cluster
+    fqdn = "${linode_object_storage_bucket.file_store.label}.${linode_object_storage_bucket.file_store.cluster}.linodeobjects.com"
+    access_key = linode_object_storage_key.file_store.access_key
+    secret_key = linode_object_storage_key.file_store.secret_key
   }
 }
 
 # Provisions a managed PostgresSQL cluster on Linode's infrasrtructure
 # The cluster can be varied from a single node through to as many as
 # we desire.
-resource "linode_database_postgresql" "primary" {
+# resource "linode_database_postgresql" "primary" {
 
-  depends_on = [
-    linode_lke_cluster.primary,
-  ]
+#   depends_on = [
+#     linode_lke_cluster.primary,
+#   ]
 
-    label = "primary_db"
+#     label = "primary_db"
 
-    engine_id = "postgresql/13.2"
-    region = var.db_region
-    type = var.db_node_type
-    cluster_size = var.db_cluster_size
+#     engine_id = "postgresql/13.2"
+#     region = var.db_region
+#     type = var.db_node_type
+#     cluster_size = var.db_cluster_size
 
-    encrypted = true
-    replication_type = "semi_synch"
-    replication_commit_type = "remote_write"
-    ssl_connection = true
+#     encrypted = true
+#     replication_type = "semi_synch"
+#     replication_commit_type = "remote_write"
+#     ssl_connection = true
 
-    updates {
-        day_of_week = "saturday"
-        duration = 1
-        frequency = "monthly"
-        hour_of_day = 22
-        week_of_month = 2
-    }
-}
+#     updates {
+#         day_of_week = "saturday"
+#         duration = 1
+#         frequency = "monthly"
+#         hour_of_day = 22
+#         week_of_month = 2
+#     }
+# }
 
 # Write the relevant secrets to the Kubernetes cluster so the application
 # can read this from the environment variables
-resource "kubernetes_secret" "db_primary" {
-  depends_on = [
-    linode_database_postgresql.primary
-  ]
+# resource "kubernetes_secret" "db_primary" {
+#   depends_on = [
+#     linode_database_postgresql.primary
+#   ]
 
-  metadata {
-     name = "primary-db"
-  }
+#   metadata {
+#      name = "primary-db"
+#   }
 
-  data = {
-    root_password = linode_database_postgresql.primary.root_password
-    root_username = linode_database_postgresql.primary.root_username
-    host_primary = linode_database_postgresql.primary.host_primary
-    host_secondary = linode_database_postgresql.primary.host_secondary
-    ca_cert = linode_database_postgresql.primary.ca_cert
-  }
-}
+#   data = {
+#     root_password = linode_database_postgresql.primary.root_password
+#     root_username = linode_database_postgresql.primary.root_username
+#     host_primary = linode_database_postgresql.primary.host_primary
+#     host_secondary = linode_database_postgresql.primary.host_secondary
+#     ca_cert = linode_database_postgresql.primary.ca_cert
+#   }
+# }
 
 # Install a high availability postgres database cluster via helm
 # Note: helm releases write their secrets to the kubernetes cluster
-resource "helm_release" "postgresql" {
+# resource "helm_release" "postgresql" {
 
-    depends_on = [
-        linode_lke_cluster.primary
-    ]
+#     depends_on = [
+#         linode_lke_cluster.primary
+#     ]
 
-    name = "postgresql"
+#     name = "postgresql"
 
-    repository = "https://charts.bitnami.com/bitnami"
-    chart = "postgresql"
+#     repository = "https://charts.bitnami.com/bitnami"
+#     chart = "postgresql"
 
-    set {
-      name  = "replicaCount"
-      value = 1
-    }
+#     set {
+#       name  = "replicaCount"
+#       value = 1
+#     }
 
-}
+# }
 
-resource "helm_release" "redis" {
-    depends_on = [
-        linode_lke_cluster.primary,
-        helm_release.postgresql
-    ]
+# resource "helm_release" "redis" {
+#     depends_on = [
+#         linode_lke_cluster.primary,
+#         helm_release.postgresql
+#     ]
 
-    name = "redis"
-    repository = "https://charts.bitnami.com/bitnami"
-    chart = "redis"
+#     name = "redis"
+#     repository = "https://charts.bitnami.com/bitnami"
+#     chart = "redis"
 
-    set {
-        name  = "cluster.enabled"
-        value = "true"
-    }
+#     set {
+#         name  = "cluster.enabled"
+#         value = "true"
+#     }
 
-    set {
-        name  = "metrics.enabled"
-        value = "true"
-    }
-}
+#     set {
+#         name  = "metrics.enabled"
+#         value = "true"
+#     }
+# }
 
 # This will provision a nodebalancer and traefik  to serve the
 # application
 resource "helm_release" "traefik" {
     depends_on = [
         linode_lke_cluster.primary,
-        helm_release.redis,
-        helm_release.postgresql 
+        # helm_release.redis,
+        # helm_release.postgresql 
     ]
 
     name = "traefik"
